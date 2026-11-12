@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "nom": "Presse Hydraulique P-100",
+    "zone": "Atelier Emboutissage",
+    "statut": "En fonctionnement",
+    "production": 420
+  },
+  {
+    "id": 2,
+    "nom": "Tour CNC T-200",
+    "zone": "Atelier Usinage",
+    "statut": "En fonctionnement",
+    "production": 315
+  },
+  {
+    "id": 3,
+    "nom": "Fraiseuse Industrielle F-30",
+    "zone": "Atelier Usinage",
+    "statut": "En panne",
+    "production": 0
+  },
+  {
+    "id": 4,
+    "nom": "Robot de Soudure S-05",
+    "zone": "Atelier Assemblage",
+    "statut": "En fonctionnement",
+    "production": 280
+  },
+  {
+    "id": 5,
+    "nom": "Convoyeur Automatisé C-12",
+    "zone": "Atelier Logistique",
+    "statut": "À l'arrêt",
+    "production": 95
+  },
+  {
+    "id": 6,
+    "nom": "Découpeuse Laser L-400",
+    "zone": "Atelier Découpe",
+    "statut": "En fonctionnement",
+    "production": 510
+  },
+  {
+    "id": 7,
+    "nom": "Compresseur Industriel K-80",
+    "zone": "Atelier Utilités",
+    "statut": "En panne",
+    "production": 0
+  },
+  {
+    "id": 8,
+    "nom": "Emballeuse Automatique E-15",
+    "zone": "Atelier Conditionnement",
+    "statut": "À l'arrêt",
+    "production": 140
+  }
+]
