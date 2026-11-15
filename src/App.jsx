@@ -5,12 +5,10 @@ import MachineList from "./components/MachineList";
 import NewMachine from "./components/NewMachine";
 import Kanban from "./components/Kanban";
 import useMachines from "./hooks/useMachines";
-
+import Toast from "./components/Toast";
 export default function App() {
-    // On récupère les données et fonctions partagées
-    const { machines, isLoading, error, addMachine, updateStatus, deleteMachine } =
-        useMachines();
 
+    const { machines, isLoading, error, toast, setToast, addMachine, updateStatus, deleteMachine } = useMachines();
     return (
         <BrowserRouter>
             <div className="flex min-h-screen bg-slate-50 text-slate-900">
@@ -55,6 +53,13 @@ export default function App() {
                     </Routes>
                 </main>
             </div>
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
+            )}
         </BrowserRouter>
     );
 }
