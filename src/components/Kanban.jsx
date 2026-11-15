@@ -1,78 +1,61 @@
 import { useState, useEffect } from "react";
 
-/**
- * Composant Kanban : Vue interactive des équipements en 3 colonnes de statuts.
- * Supporte le glisser-déposer fluide à la souris ou pavé tactile (Pointer Drag & Drop)
- * avec une carte flottante visuelle et des boutons de déplacement rapide en 1 clic.
- */
 export default function Kanban({ machines = [], onStatusChange }) {
-  // Machine actuellement attrapée avec la souris
   const [draggingCard, setDraggingCard] = useState(null);
-  // Position actuelle de la souris
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  // Statut de la colonne actuellement survolée
   const [hoveredCol, setHoveredCol] = useState(null);
 
-  // Configuration des 3 colonnes de l'usine de Safi
   const colonnes = [
     {
       id: "En fonctionnement",
       titre: "En fonctionnement",
-      couleurBadge: "bg-emerald-50 text-emerald-700 border-emerald-200",
-      bordureSurvol: "border-emerald-500 bg-emerald-50/60 ring-4 ring-emerald-200",
-      pastille: "bg-emerald-500",
+      badgeClass: "bg-emerald-50 text-emerald-800 border-emerald-200/80",
+      activeBorder: "border-emerald-500 bg-emerald-50/40 ring-4 ring-emerald-100/70",
+      dot: "bg-emerald-500",
       prochainsStatuts: ["À l'arrêt", "En panne"],
     },
     {
       id: "À l'arrêt",
       titre: "À l'arrêt",
-      couleurBadge: "bg-amber-50 text-amber-700 border-amber-200",
-      bordureSurvol: "border-amber-500 bg-amber-50/60 ring-4 ring-amber-200",
-      pastille: "bg-amber-500",
+      badgeClass: "bg-amber-50 text-amber-800 border-amber-200/80",
+      activeBorder: "border-amber-500 bg-amber-50/40 ring-4 ring-amber-100/70",
+      dot: "bg-amber-500",
       prochainsStatuts: ["En fonctionnement", "En panne"],
     },
     {
       id: "En panne",
       titre: "En panne",
-      couleurBadge: "bg-rose-50 text-rose-700 border-rose-200",
-      bordureSurvol: "border-rose-500 bg-rose-50/60 ring-4 ring-rose-200",
-      pastille: "bg-rose-500",
+      badgeClass: "bg-rose-50 text-rose-800 border-rose-200/80",
+      activeBorder: "border-rose-500 bg-rose-50/40 ring-4 ring-rose-100/70",
+      dot: "bg-rose-500",
       prochainsStatuts: ["En fonctionnement", "À l'arrêt"],
     },
   ];
 
-  // 1. Début de la saisie d'une carte avec la souris (ou pavé tactile)
   const handlePointerDown = (e, machine) => {
-    // Si l'utilisateur clique sur un bouton ou un lien, on ne démarre pas le glisser
     if (e.target.closest("button") || e.target.closest("a")) return;
-
     setDraggingCard(machine);
     setMousePos({ x: e.clientX, y: e.clientY });
   };
 
-  // 2. Gestion globale du déplacement et du dépôt dans la fenêtre
   useEffect(() => {
     if (!draggingCard) return;
 
-    // Déplacement : met à jour la position de la carte flottante et détecte la colonne survolée
     const handlePointerMove = (e) => {
       setMousePos({ x: e.clientX, y: e.clientY });
-
-      // Détecter l'élément sous le curseur de la souris
-      const elementSousCurseur = document.elementFromPoint(e.clientX, e.clientY);
-      const colElement = elementSousCurseur?.closest("[data-column-id]");
-      if (colElement) {
-        setHoveredCol(colElement.getAttribute("data-column-id"));
+      const element = document.elementFromPoint(e.clientX, e.clientY);
+      const colEl = element?.closest("[data-column-id]");
+      if (colEl) {
+        setHoveredCol(colEl.getAttribute("data-column-id"));
       } else {
         setHoveredCol(null);
       }
     };
 
-    // Relâchement (Drop) : applique le nouveau statut si la souris est au-dessus d'une colonne
     const handlePointerUp = (e) => {
-      const elementSousCurseur = document.elementFromPoint(e.clientX, e.clientY);
-      const colElement = elementSousCurseur?.closest("[data-column-id]");
-      const statutCible = colElement?.getAttribute("data-column-id");
+      const element = document.elementFromPoint(e.clientX, e.clientY);
+      const colEl = element?.closest("[data-column-id]");
+      const statutCible = colEl?.getAttribute("data-column-id");
 
       if (statutCible && statutCible !== draggingCard.statut && onStatusChange) {
         onStatusChange(draggingCard.id, statutCible);
@@ -91,7 +74,7 @@ export default function Kanban({ machines = [], onStatusChange }) {
     };
   }, [draggingCard, onStatusChange]);
 
-  // Support supplémentaire du Drag & Drop HTML5 natif
+  // Support Drag & Drop HTML5 natif
   const handleNativeDragStart = (e, machineId) => {
     e.dataTransfer.setData("text/plain", String(machineId));
     e.dataTransfer.effectAllowed = "move";
@@ -116,24 +99,29 @@ export default function Kanban({ machines = [], onStatusChange }) {
   };
 
   return (
-    <div className="space-y-6 select-none">
-      {/* En-tête de la vue Kanban */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-6 max-w-7xl mx-auto select-none">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200/60">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
-            Tableau Kanban des équipements
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            Suivi Kanban des Équipements
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            <strong>Cliquez et glissez une carte avec la souris</strong> vers une autre colonne pour changer son statut.
+          <p className="text-xs text-slate-500 mt-1">
+            Déplacez une machine par <strong>glisser-déposer</strong> pour mettre à jour son statut opérationnel
           </p>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs text-slate-500 font-medium bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-2xs">
+          <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+          <span>Synchronisation automatique</span>
         </div>
       </div>
 
-      {/* Grille des 3 colonnes */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      {/* Kanban Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
         {colonnes.map((col) => {
-          const machinesColonne = machines.filter((m) => m.statut === col.id);
-          const estSurvolee = hoveredCol === col.id;
+          const colMachines = machines.filter((m) => m.statut === col.id);
+          const isOver = hoveredCol === col.id;
 
           return (
             <div
@@ -141,31 +129,31 @@ export default function Kanban({ machines = [], onStatusChange }) {
               data-column-id={col.id}
               onDragOver={(e) => handleNativeDragOver(e, col.id)}
               onDrop={(e) => handleNativeDrop(e, col.id)}
-              className={`rounded-2xl p-4 border-2 transition-all min-h-[580px] flex flex-col ${
-                estSurvolee
-                  ? col.bordureSurvol
-                  : "bg-slate-100/70 border-slate-200/80"
+              className={`rounded-2xl p-4 border transition-all min-h-[600px] flex flex-col ${
+                isOver
+                  ? col.activeBorder
+                  : "bg-slate-100/60 border-slate-200/80"
               }`}
             >
-              {/* En-tête de colonne */}
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200/70 mb-4 pointer-events-none">
+              {/* Column Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200/60 mb-3.5 pointer-events-none">
                 <div className="flex items-center gap-2">
-                  <span className={`w-2.5 h-2.5 rounded-full ${col.pastille}`}></span>
-                  <h3 className="font-bold text-slate-900 text-sm">
+                  <span className={`w-2.5 h-2.5 rounded-full ${col.dot}`}></span>
+                  <h3 className="font-bold text-slate-900 text-xs tracking-tight">
                     {col.titre}
                   </h3>
                 </div>
                 <span
-                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${col.couleurBadge}`}
+                  className={`text-[11px] font-bold px-2 py-0.5 rounded-md border ${col.badgeClass} tabular-nums`}
                 >
-                  {machinesColonne.length}
+                  {colMachines.length}
                 </span>
               </div>
 
-              {/* Zone des cartes de la colonne */}
+              {/* Cards Container */}
               <div className="space-y-3 flex-1 flex flex-col">
-                {machinesColonne.map((machine) => {
-                  const estEnCoursDeGlissement = draggingCard?.id === machine.id;
+                {colMachines.map((machine) => {
+                  const isBeingDragged = draggingCard?.id === machine.id;
 
                   return (
                     <div
@@ -173,50 +161,47 @@ export default function Kanban({ machines = [], onStatusChange }) {
                       draggable="true"
                       onDragStart={(e) => handleNativeDragStart(e, machine.id)}
                       onPointerDown={(e) => handlePointerDown(e, machine)}
-                      className={`bg-white rounded-xl p-4 border border-slate-200 shadow-sm transition hover:shadow-md cursor-grab active:cursor-grabbing touch-none ${
-                        estEnCoursDeGlissement
-                          ? "opacity-30 border-dashed border-blue-400 scale-95"
+                      className={`bg-white rounded-xl p-4 border border-slate-200/90 shadow-2xs hover:shadow-md transition-all cursor-grab active:cursor-grabbing touch-none group ${
+                        isBeingDragged
+                          ? "opacity-25 border-dashed border-blue-400 scale-95"
                           : "opacity-100"
                       }`}
                     >
-                      {/* En-tête de la carte (ID et Atelier) */}
                       <div className="flex items-start justify-between gap-2 pointer-events-none">
-                        <span className="text-xs font-bold text-slate-400">
-                          #{machine.id}
+                        <span className="font-mono text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                          #{String(machine.id).padStart(2, "0")}
                         </span>
-                        <span className="text-[11px] text-slate-400 font-medium">
+                        <span className="text-[11px] text-slate-400 font-medium tracking-tight">
                           {machine.zone}
                         </span>
                       </div>
 
-                      {/* Nom de la machine */}
-                      <h4 className="font-bold text-slate-900 text-sm mt-1 pointer-events-none">
+                      <h4 className="font-bold text-slate-900 text-xs mt-2 group-hover:text-blue-600 transition-colors pointer-events-none">
                         {machine.nom}
                       </h4>
 
-                      {/* Production journalière */}
-                      <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 pointer-events-none">
-                        <span>Production :</span>
-                        <span className="font-bold text-slate-800">
+                      <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 pointer-events-none">
+                        <span className="text-slate-400">Production</span>
+                        <span className="font-bold text-slate-800 tabular-nums">
                           {machine.production} pcs
                         </span>
                       </div>
 
-                      {/* Boutons d'action rapide */}
+                      {/* Quick Move Buttons */}
                       <div className="mt-3 pt-2 border-t border-slate-100 flex items-center gap-1.5 flex-wrap">
                         <span className="text-[10px] text-slate-400 font-medium">
-                          Déplacer vers :
+                          Déplacer :
                         </span>
-                        {col.prochainsStatuts.map((statutCible) => (
+                        {col.prochainsStatuts.map((target) => (
                           <button
-                            key={statutCible}
+                            key={target}
                             type="button"
                             onClick={() =>
-                              onStatusChange && onStatusChange(machine.id, statutCible)
+                              onStatusChange && onStatusChange(machine.id, target)
                             }
-                            className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 transition cursor-pointer"
+                            className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-600 transition cursor-pointer"
                           >
-                            → {statutCible}
+                            → {target}
                           </button>
                         ))}
                       </div>
@@ -224,10 +209,9 @@ export default function Kanban({ machines = [], onStatusChange }) {
                   );
                 })}
 
-                {/* Message d'aide si la colonne est vide */}
-                {machinesColonne.length === 0 && (
-                  <div className="flex-1 min-h-[140px] border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 font-medium p-4 text-center pointer-events-none">
-                    Glissez et déposez une machine ici
+                {colMachines.length === 0 && (
+                  <div className="flex-1 min-h-[140px] border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center text-xs text-slate-400 font-medium p-4 text-center pointer-events-none">
+                    Déposez une machine ici
                   </div>
                 )}
               </div>
@@ -236,35 +220,35 @@ export default function Kanban({ machines = [], onStatusChange }) {
         })}
       </div>
 
-      {/* Carte flottante qui suit visiblement la souris lors du glissement */}
+      {/* Floating Card during active Pointer Drag */}
       {draggingCard && (
         <div
           id="floating-card"
           style={{
             position: "fixed",
-            left: `${mousePos.x - 140}px`,
+            left: `${mousePos.x - 130}px`,
             top: `${mousePos.y - 35}px`,
-            width: "280px",
+            width: "260px",
             pointerEvents: "none",
             zIndex: 99999,
-            transform: "rotate(2.5deg) scale(1.05)",
+            transform: "rotate(2deg) scale(1.03)",
           }}
-          className="bg-white rounded-xl p-4 border-2 border-blue-500 shadow-2xl opacity-95 transition-transform"
+          className="bg-white rounded-xl p-4 border border-blue-500 shadow-2xl shadow-blue-500/15 opacity-95 transition-transform ring-2 ring-blue-500/20"
         >
           <div className="flex items-start justify-between gap-2">
-            <span className="text-xs font-bold text-slate-400">
-              #{draggingCard.id}
+            <span className="font-mono text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+              #{String(draggingCard.id).padStart(2, "0")}
             </span>
             <span className="text-[11px] text-slate-400 font-medium">
               {draggingCard.zone}
             </span>
           </div>
-          <h4 className="font-bold text-slate-900 text-sm mt-1">
+          <h4 className="font-bold text-slate-900 text-xs mt-1">
             {draggingCard.nom}
           </h4>
-          <div className="mt-2 text-xs text-blue-600 font-semibold flex items-center gap-1">
-            <span>↳</span>
-            <span>Cible : {hoveredCol || "Survolez une colonne"}</span>
+          <div className="mt-2 text-[11px] text-blue-600 font-semibold flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+            <span>Vers : {hoveredCol || "Relâchez sur une colonne"}</span>
           </div>
         </div>
       )}

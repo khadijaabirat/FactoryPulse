@@ -4,16 +4,13 @@ import { useNavigate, Link } from "react-router-dom";
 export default function NewMachine({ onAdd, machines = [] }) {
   const navigate = useNavigate();
 
-  // 1. Déclaration des états pour chaque champ du formulaire (composant contrôlé)
+  // États du formulaire
   const [nom, setNom] = useState("");
   const [zone, setZone] = useState("");
   const [statut, setStatut] = useState("En fonctionnement");
   const [production, setProduction] = useState("");
-
-  // 2. État pour stocker les erreurs de validation
   const [erreurs, setErreurs] = useState({});
 
-  // Liste des ateliers typiques de l'usine de Safi
   const zonesSafi = [
     "Atelier Emboutissage",
     "Atelier Usinage",
@@ -24,58 +21,45 @@ export default function NewMachine({ onAdd, machines = [] }) {
     "Atelier Conditionnement",
   ];
 
-  // 3. Fonction de validation du formulaire
   const valider = () => {
     const nouvellesErreurs = {};
 
-    // Validation du nom (obligatoire et au moins 3 caractères)
     if (!nom.trim()) {
-      nouvellesErreurs.nom = "Le nom de la machine est obligatoire.";
+      nouvellesErreurs.nom = "Le nom de l'équipement est requis.";
     } else if (nom.trim().length < 3) {
       nouvellesErreurs.nom = "Le nom doit comporter au moins 3 caractères.";
     }
 
-    // Validation de la zone (obligatoire)
     if (!zone.trim()) {
-      nouvellesErreurs.zone = "Veuillez choisir ou saisir une zone de production.";
+      nouvellesErreurs.zone = "Veuillez sélectionner ou saisir une zone de production.";
     }
 
-    // Validation du statut (obligatoire)
     if (!statut) {
-      nouvellesErreurs.statut = "Le statut est obligatoire.";
+      nouvellesErreurs.statut = "Le statut opérationnel est obligatoire.";
     }
 
-    // Validation de la production journalière (obligatoire, nombre >= 0)
     if (production === "" || production === null) {
-      nouvellesErreurs.production = "La production journalière est obligatoire.";
+      nouvellesErreurs.production = "La production journalière est requise.";
     } else {
-      const nombreProduction = Number(production);
-      if (isNaN(nombreProduction) || nombreProduction < 0) {
-        nouvellesErreurs.production = "La production doit être un nombre positif ou nul (≥ 0).";
+      const p = Number(production);
+      if (isNaN(p) || p < 0 || !Number.isInteger(p)) {
+        nouvellesErreurs.production = "La production doit être un entier positif ou nul (≥ 0).";
       }
     }
 
     setErreurs(nouvellesErreurs);
-    // Retourne true s'il n'y a aucune erreur
     return Object.keys(nouvellesErreurs).length === 0;
   };
 
-  // 4. Gestion de la soumission du formulaire
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!valider()) return;
 
-    // Si le formulaire n'est pas valide, on ne fait rien
-    if (!valider()) {
-      return;
-    }
-
-    // Génération automatique d'un identifiant unique (ID max + 1)
     const nouvelId =
       machines && machines.length > 0
         ? Math.max(...machines.map((m) => m.id)) + 1
         : 1;
 
-    // Création du nouvel objet machine
     const nouvelleMachine = {
       id: nouvelId,
       nom: nom.trim(),
@@ -84,47 +68,42 @@ export default function NewMachine({ onAdd, machines = [] }) {
       production: Number(production),
     };
 
-    // Ajout de la machine dans l'état global
     if (onAdd) {
       onAdd(nouvelleMachine);
     }
 
-    // Redirection vers la liste des machines
     navigate("/machines");
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      {/* En-tête */}
-      <div className="flex items-center justify-between">
+    <div className="max-w-xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between pb-2 border-b border-slate-200/60">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
-            Ajouter une nouvelle machine
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            Enregistrer un Équipement
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Enregistrez un nouvel équipement sur le site de production de Safi
+          <p className="text-xs text-slate-500 mt-1">
+            Ajout d'une nouvelle unité de production au parc de Safi
           </p>
         </div>
         <Link
           to="/machines"
-          className="text-sm font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-4 py-2 rounded-xl transition shadow-sm"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition shadow-2xs"
         >
-          ← Retour à la liste
+          <span>← Retour</span>
         </Link>
       </div>
 
-      {/* Formulaire contrôlé */}
+      {/* Form Container */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-6"
+        className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 shadow-xs space-y-5"
       >
-        {/* Champ 1 : Nom de la machine */}
-        <div>
-          <label
-            htmlFor="nom"
-            className="block text-sm font-semibold text-slate-700 mb-1"
-          >
-            Nom de l'équipement <span className="text-rose-500">*</span>
+        {/* Nom */}
+        <div className="space-y-1.5">
+          <label htmlFor="nom" className="block text-xs font-semibold text-slate-700">
+            Désignation de la machine <span className="text-rose-500">*</span>
           </label>
           <input
             id="nom"
@@ -132,121 +111,119 @@ export default function NewMachine({ onAdd, machines = [] }) {
             placeholder="Ex : Presse Hydraulique P-150"
             value={nom}
             onChange={(e) => setNom(e.target.value)}
-            className={`w-full px-4 py-2.5 text-sm bg-slate-50 border rounded-xl focus:outline-none focus:ring-2 ${
+            className={`w-full px-3.5 py-2 text-xs bg-slate-50/80 hover:bg-slate-50 focus:bg-white border rounded-xl focus:outline-none focus:ring-2 transition ${
               erreurs.nom
                 ? "border-rose-400 focus:ring-rose-200"
-                : "border-slate-200 focus:ring-blue-500"
+                : "border-slate-200 focus:ring-blue-500/20 focus:border-blue-500"
             }`}
           />
           {erreurs.nom && (
-            <p className="text-xs text-rose-600 mt-1.5 font-medium">
+            <p className="text-[11px] text-rose-600 font-medium">
               {erreurs.nom}
             </p>
           )}
         </div>
 
-        {/* Champ 2 : Zone de production */}
-        <div>
-          <label
-            htmlFor="zone"
-            className="block text-sm font-semibold text-slate-700 mb-1"
-          >
-            Zone de production (Atelier) <span className="text-rose-500">*</span>
+        {/* Zone */}
+        <div className="space-y-1.5">
+          <label htmlFor="zone" className="block text-xs font-semibold text-slate-700">
+            Atelier / Zone de production <span className="text-rose-500">*</span>
           </label>
           <input
             id="zone"
             type="text"
-            list="zones-list"
-            placeholder="Ex : Atelier Usinage"
+            list="zones-safi"
+            placeholder="Sélectionnez ou saisissez un atelier..."
             value={zone}
             onChange={(e) => setZone(e.target.value)}
-            className={`w-full px-4 py-2.5 text-sm bg-slate-50 border rounded-xl focus:outline-none focus:ring-2 ${
+            className={`w-full px-3.5 py-2 text-xs bg-slate-50/80 hover:bg-slate-50 focus:bg-white border rounded-xl focus:outline-none focus:ring-2 transition ${
               erreurs.zone
                 ? "border-rose-400 focus:ring-rose-200"
-                : "border-slate-200 focus:ring-blue-500"
+                : "border-slate-200 focus:ring-blue-500/20 focus:border-blue-500"
             }`}
           />
-          <datalist id="zones-list">
+          <datalist id="zones-safi">
             {zonesSafi.map((z) => (
               <option key={z} value={z} />
             ))}
           </datalist>
           {erreurs.zone && (
-            <p className="text-xs text-rose-600 mt-1.5 font-medium">
+            <p className="text-[11px] text-rose-600 font-medium">
               {erreurs.zone}
             </p>
           )}
-          <p className="text-[11px] text-slate-400 mt-1">
-            Astuce : vous pouvez sélectionner un atelier suggéré ou taper un nouveau nom.
-          </p>
         </div>
 
-        {/* Champ 3 : Statut initial */}
-        <div>
-          <label
-            htmlFor="statut"
-            className="block text-sm font-semibold text-slate-700 mb-1"
-          >
-            Statut initial <span className="text-rose-500">*</span>
-          </label>
-          <select
-            id="statut"
-            value={statut}
-            onChange={(e) => setStatut(e.target.value)}
-            className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-          >
-            <option value="En fonctionnement">En fonctionnement (Opérationnel)</option>
-            <option value="À l'arrêt">À l'arrêt (En veille / Pause)</option>
-            <option value="En panne">En panne (Maintenance requise)</option>
-          </select>
-          {erreurs.statut && (
-            <p className="text-xs text-rose-600 mt-1.5 font-medium">
-              {erreurs.statut}
-            </p>
-          )}
+        {/* Statut initial & Production (2 colonnes) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label htmlFor="statut" className="block text-xs font-semibold text-slate-700">
+              Statut initial <span className="text-rose-500">*</span>
+            </label>
+            <div className="relative">
+              <select
+                id="statut"
+                value={statut}
+                onChange={(e) => setStatut(e.target.value)}
+                className="w-full px-3.5 pr-8 py-2 text-xs font-medium bg-slate-50/80 hover:bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none cursor-pointer text-slate-700"
+              >
+                <option value="En fonctionnement">En fonctionnement</option>
+                <option value="À l'arrêt">À l'arrêt</option>
+                <option value="En panne">En panne</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+            {erreurs.statut && (
+              <p className="text-[11px] text-rose-600 font-medium">
+                {erreurs.statut}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-1.5">
+            <label htmlFor="production" className="block text-xs font-semibold text-slate-700">
+              Production journalière (pièces) <span className="text-rose-500">*</span>
+            </label>
+            <input
+              id="production"
+              type="number"
+              min="0"
+              placeholder="Ex : 350"
+              value={production}
+              onChange={(e) => setProduction(e.target.value)}
+              className={`w-full px-3.5 py-2 text-xs bg-slate-50/80 hover:bg-slate-50 focus:bg-white border rounded-xl focus:outline-none focus:ring-2 transition ${
+                erreurs.production
+                  ? "border-rose-400 focus:ring-rose-200"
+                  : "border-slate-200 focus:ring-blue-500/20 focus:border-blue-500"
+              }`}
+            />
+            {erreurs.production && (
+              <p className="text-[11px] text-rose-600 font-medium">
+                {erreurs.production}
+              </p>
+            )}
+          </div>
         </div>
 
-        {/* Champ 4 : Production journalière */}
-        <div>
-          <label
-            htmlFor="production"
-            className="block text-sm font-semibold text-slate-700 mb-1"
-          >
-            Production journalière (pièces) <span className="text-rose-500">*</span>
-          </label>
-          <input
-            id="production"
-            type="number"
-            min="0"
-            placeholder="Ex : 250"
-            value={production}
-            onChange={(e) => setProduction(e.target.value)}
-            className={`w-full px-4 py-2.5 text-sm bg-slate-50 border rounded-xl focus:outline-none focus:ring-2 ${
-              erreurs.production
-                ? "border-rose-400 focus:ring-rose-200"
-                : "border-slate-200 focus:ring-blue-500"
-            }`}
-          />
-          {erreurs.production && (
-            <p className="text-xs text-rose-600 mt-1.5 font-medium">
-              {erreurs.production}
-            </p>
-          )}
-        </div>
-
-        {/* Boutons d'action */}
-        <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+        {/* Buttons */}
+        <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2.5">
           <Link
             to="/machines"
-            className="px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition"
+            className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition"
           >
             Annuler
           </Link>
           <button
             type="submit"
-            className="px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition flex items-center gap-2"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm shadow-blue-500/20 transition cursor-pointer"
           >
-            <span>+</span>
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+            </svg>
             <span>Enregistrer la machine</span>
           </button>
         </div>
