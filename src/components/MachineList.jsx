@@ -1,62 +1,70 @@
 import { useState } from "react";
 import MachineCard from "./MachineCard";
 
+/**
+ * Composant MachineList : Affiche la liste complète des machines avec recherche,
+ * filtrage par statut, tri dynamique et exportation en fichier CSV.
+ */
 export default function MachineList({
-  machines,
+  machines = [],
   isLoading,
   error,
   onStatusChange,
   onDelete,
 }) {
+  // 1. États pour la recherche, le filtre et le tri
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("Tous");
   const [sortBy, setSortBy] = useState("nom-asc");
 
-  // 1. Filtrer les machines selon la recherche et le statut
-  const filteredMachines = machines.filter((machine) => {
-    const matchesName = machine.nom
+  // 2. Filtrer les machines selon le texte recherché et le statut sélectionné
+  const machinesFiltrees = machines.filter((machine) => {
+    const correspondNom = machine.nom
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
 
-    const matchesStatus =
+    const correspondStatut =
       statusFilter === "Tous" || machine.statut === statusFilter;
 
-    return matchesName && matchesStatus;
+    return correspondNom && correspondStatut;
   });
 
-  // 2. Trier les machines filtrées (FCTRPLS-19)
-  const sortedMachines = [...filteredMachines].sort((a, b) => {
+  // 3. Trier les machines filtrées (FCTRPLS-19)
+  const machinesTriees = [...machinesFiltrees].sort((a, b) => {
     if (sortBy === "production-desc") return b.production - a.production;
     if (sortBy === "production-asc") return a.production - b.production;
     if (sortBy === "nom-desc") return b.nom.localeCompare(a.nom);
     return a.nom.localeCompare(b.nom);
   });
 
-  // 3. Réinitialiser la recherche, les filtres et le tri
+  // 4. Réinitialiser la recherche et tous les filtres
   const handleReset = () => {
     setSearchTerm("");
     setStatusFilter("Tous");
     setSortBy("nom-asc");
   };
 
-  // 4. Exporter la liste actuelle en CSV (FCTRPLS-18)
-  const exportToCSV = () => {
-    const entetes = "ID,Nom,Zone,Statut,Production\n";
-    const lignes = sortedMachines
+  // 5. Exporter les machines affichées au format CSV (FCTRPLS-18)
+  const exporterCSV = () => {
+    const entete = "ID,Nom,Zone,Statut,Production\n";
+    const lignes = machinesTriees
       .map(
         (m) => `${m.id},"${m.nom}","${m.zone}",${m.statut},${m.production}`
       )
       .join("\n");
 
-    const fichier = new Blob([entetes + lignes], {
+    const blob = new Blob([entete + lignes], {
       type: "text/csv;charset=utf-8;",
     });
+    const url = URL.createObjectURL(blob);
     const lien = document.createElement("a");
-    lien.href = URL.createObjectURL(fichier);
+    lien.href = url;
     lien.download = "machines-factorypulse.csv";
     lien.click();
+    URL.revokeObjectURL(url);
   };
 
+  // 6. Gestion du chargement
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -67,10 +75,11 @@ export default function MachineList({
     );
   }
 
+  // 7. Gestion des erreurs
   if (error) {
     return (
       <div className="bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-xl">
-        <p className="font-bold">Erreur :</p>
+        <p className="font-bold">Erreur de chargement :</p>
         <p>{error}</p>
       </div>
     );
@@ -78,21 +87,21 @@ export default function MachineList({
 
   return (
     <div className="space-y-6">
-      {/* En-tête avec titre et bouton Exporter CSV */}
+      {/* En-tête avec titre, compteur et bouton d'export CSV */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">
             Gestion des machines
           </h1>
           <p className="text-sm text-slate-500">
-            {sortedMachines.length} sur {machines.length} machine(s) affichée(s)
+            {machinesTriees.length} sur {machines.length} machine(s) affichée(s)
           </p>
         </div>
 
         {/* Bouton Exporter CSV */}
         <button
-          onClick={exportToCSV}
-          className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition shadow-sm w-fit"
+          onClick={exporterCSV}
+          className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition shadow-sm w-fit cursor-pointer"
         >
           <span>📥</span>
           <span>Exporter en CSV</span>
@@ -126,7 +135,7 @@ export default function MachineList({
           </select>
         </div>
 
-        {/* Sélecteur de tri dynamique (FCTRPLS-19) */}
+        {/* Sélecteur de tri dynamique */}
         <div className="md:w-56">
           <select
             value={sortBy}
@@ -140,36 +149,36 @@ export default function MachineList({
           </select>
         </div>
 
-        {/* Bouton Réinitialiser */}
+        {/* Bouton Réinitialiser (visible si au moins un filtre est actif) */}
         {(searchTerm !== "" || statusFilter !== "Tous" || sortBy !== "nom-asc") && (
           <button
             onClick={handleReset}
-            className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition whitespace-nowrap"
+            className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition whitespace-nowrap cursor-pointer"
           >
             Réinitialiser
           </button>
         )}
       </div>
 
-      {/* Liste des machines OU message aucun résultat */}
-      {sortedMachines.length === 0 ? (
+      {/* Grille des machines OU Message d'état vide */}
+      {machinesTriees.length === 0 ? (
         <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
           <p className="text-base font-semibold text-slate-700">
             Aucun résultat disponible
           </p>
           <p className="text-sm text-slate-400 mt-1">
-            Aucune machine ne correspond à votre recherche "{searchTerm}".
+            Aucune machine ne correspond à vos critères de recherche.
           </p>
           <button
             onClick={handleReset}
-            className="mt-4 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-sm font-semibold hover:bg-blue-100 transition"
+            className="mt-4 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-sm font-semibold hover:bg-blue-100 transition cursor-pointer"
           >
             Réinitialiser la recherche
           </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sortedMachines.map((machine) => (
+          {machinesTriees.map((machine) => (
             <MachineCard
               key={machine.id}
               machine={machine}

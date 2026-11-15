@@ -1,16 +1,43 @@
+/**
+ * Composant réutilisable StatCard : Affiche un indicateur KPI avec un titre,
+ * une valeur, un sous-titre optionnel, une couleur de bordure et une icône.
+ */
 export default function StatCard({
-  title, value, color = "blue", icon, subtitle, }) {
-  const colorStyles = {
-    blue: { border: "border-blue-500", bgLight: "bg-blue-50", text: "text-blue-600", },
-    green: { border: "border-emerald-500", bgLight: "bg-emerald-50", text: "text-emerald-600", },
-    red: { border: "border-rose-500", bgLight: "bg-rose-50", text: "text-rose-600", },
-    yellow: { border: "border-amber-500", bgLight: "bg-amber-50", text: "text-amber-600", },
+  title,
+  value,
+  color = "blue",
+  icon,
+  subtitle,
+}) {
+  // Styles selon la couleur passée en prop
+  const stylesCouleurs = {
+    blue: {
+      border: "border-blue-500",
+      bgLight: "bg-blue-50",
+      text: "text-blue-600",
+    },
+    green: {
+      border: "border-emerald-500",
+      bgLight: "bg-emerald-50",
+      text: "text-emerald-600",
+    },
+    red: {
+      border: "border-rose-500",
+      bgLight: "bg-rose-50",
+      text: "text-rose-600",
+    },
+    yellow: {
+      border: "border-amber-500",
+      bgLight: "bg-amber-50",
+      text: "text-amber-600",
+    },
   };
 
-  const current = colorStyles[color] || colorStyles.blue;
+  const current = stylesCouleurs[color] || stylesCouleurs.blue;
 
   return (
-    <div className={`bg-white rounded-2xl p-6 border-l-4 ${current.border} border border-slate-200/80 shadow-sm hover:shadow-md transition flex items-center justify-between gap-4`}
+    <div
+      className={`bg-white rounded-2xl p-6 border-l-4 ${current.border} border border-slate-200/80 shadow-sm hover:shadow-md transition flex items-center justify-between gap-4`}
     >
       <div>
         <p className="text-sm font-medium text-slate-500">{title}</p>
@@ -31,4 +58,4 @@ export default function StatCard({
       )}
     </div>
   );
-} 
+}
