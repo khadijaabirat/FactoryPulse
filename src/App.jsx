@@ -4,18 +4,53 @@ import Dashboard from "./components/Dashboard";
 import MachineList from "./components/MachineList";
 import NewMachine from "./components/NewMachine";
 import Kanban from "./components/Kanban";
+import useMachines from "./hooks/useMachines";
 
 export default function App() {
+    const { machines, isLoading, error, addMachine, updateStatus, deleteMachine } =
+        useMachines();
+
     return (
         <BrowserRouter>
             <div className="flex min-h-screen bg-slate-50 text-slate-900">
                 <Sidebar />
                 <main className="flex-1 p-8 overflow-y-auto">
                     <Routes>
-                        <Route path="/" element={<Dashboard />} />
-                        <Route path="/machines" element={<MachineList />} />
-                        <Route path="/machines/new" element={<NewMachine />} />
-                        <Route path="/kanban" element={<Kanban />} />
+                        <Route
+                            path="/"
+                            element={
+                                <Dashboard
+                                    machines={machines}
+                                    isLoading={isLoading}
+                                    error={error}
+                                />
+                            }
+                        />
+                        <Route
+                            path="/machines"
+                            element={
+                                <MachineList
+                                    machines={machines}
+                                    isLoading={isLoading}
+                                    error={error}
+                                    onStatusChange={updateStatus}
+                                    onDelete={deleteMachine}
+                                />
+                            }
+                        />
+                        <Route
+                            path="/machines/new"
+                            element={<NewMachine onAdd={addMachine} />}
+                        />
+                        <Route
+                            path="/kanban"
+                            element={
+                                <Kanban
+                                    machines={machines}
+                                    onStatusChange={updateStatus}
+                                />
+                            }
+                        />
                     </Routes>
                 </main>
             </div>
