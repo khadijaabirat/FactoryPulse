@@ -7,6 +7,7 @@ import Kanban from "./components/Kanban";
 import useMachines from "./hooks/useMachines";
 
 export default function App() {
+    // On récupère les données et fonctions partagées
     const { machines, isLoading, error, addMachine, updateStatus, deleteMachine } =
         useMachines();
 
