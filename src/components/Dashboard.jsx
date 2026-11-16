@@ -51,10 +51,7 @@ export default function Dashboard({ machines = [], isLoading, error }) {
             <h1 className="text-2xl font-black tracking-tight text-zinc-900">
               Supervision de Production
             </h1>
-            <span className="flex items-center gap-1.5 text-[11px] font-bold text-amber-900 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-              Temps Réel
-            </span>
+
           </div>
           <p className="text-xs text-zinc-500 mt-1">
             Site Industriel de Safi · Suivi opérationnel des 8 équipements majeurs

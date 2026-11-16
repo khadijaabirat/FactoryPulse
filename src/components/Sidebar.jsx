@@ -2,10 +2,9 @@ import { NavLink, Link } from "react-router-dom";
 
 export default function Sidebar() {
   const getNavLinkClass = ({ isActive }) =>
-    `group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-      isActive
-        ? "bg-amber-400 text-zinc-950 shadow-sm shadow-amber-400/20 font-bold"
-        : "text-zinc-400 hover:text-white hover:bg-zinc-800/80"
+    `group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${isActive
+      ? "bg-amber-400 text-zinc-950 shadow-sm shadow-amber-400/20 font-bold"
+      : "text-zinc-400 hover:text-white hover:bg-zinc-800/80"
     }`;
 
   return (
@@ -63,10 +62,9 @@ export default function Sidebar() {
           <NavLink
             to="/machines/new"
             className={({ isActive }) =>
-              `flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm ${
-                isActive
-                  ? "bg-amber-300 text-zinc-950 ring-2 ring-amber-400"
-                  : "bg-amber-400 text-zinc-950 hover:bg-amber-300 shadow-amber-400/20 hover:shadow-md"
+              `flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm ${isActive
+                ? "bg-amber-300 text-zinc-950 ring-2 ring-amber-400"
+                : "bg-amber-400 text-zinc-950 hover:bg-amber-300 shadow-amber-400/20 hover:shadow-md"
               }`
             }
           >
@@ -81,7 +79,6 @@ export default function Sidebar() {
       <div className="p-3 bg-zinc-800/80 rounded-xl border border-zinc-700/80">
         <div className="flex items-center gap-2.5">
           <div className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400"></span>
           </div>
           <div className="min-w-0 flex-1">
