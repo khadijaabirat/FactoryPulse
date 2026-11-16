@@ -1,17 +1,11 @@
 import { useState, useEffect } from "react";
 
-/**
- * Hook personnalisé pour gérer l'état global des machines industrielles.
- * Gère le chargement initial depuis /machines.json et les opérations CRUD en mémoire.
- */
 export default function useMachines() {
-  // 1. États principaux
   const [machines, setMachines] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [toast, setToast] = useState(null);
 
-  // 2. Chargement initial des 8 machines au démarrage du composant
   useEffect(() => {
     async function getMachines() {
       try {
@@ -31,21 +25,18 @@ export default function useMachines() {
     getMachines();
   }, []);
 
-  // 3. Fonction utilitaire pour afficher un message temporaire (Toast)
   const showToast = (message, type = "info") => {
     setToast({ message, type });
     setTimeout(() => {
       setToast(null);
-    }, 3000); // Disparaît automatiquement après 3 secondes
+    }, 3000);
   };
 
-  // 4. Ajouter une nouvelle machine
   const addMachine = (nouvelleMachine) => {
     setMachines((prevMachines) => [...prevMachines, nouvelleMachine]);
     showToast(`Machine "${nouvelleMachine.nom}" ajoutée avec succès !`, "success");
   };
 
-  // 5. Mettre à jour le statut d'une machine (synchronisé sur toutes les vues)
   const updateStatus = (id, nouveauStatut) => {
     setMachines((prevMachines) =>
       prevMachines.map((machine) =>
@@ -55,7 +46,6 @@ export default function useMachines() {
     showToast(`Statut mis à jour : ${nouveauStatut}`, "info");
   };
 
-  // 6. Supprimer une machine
   const deleteMachine = (id) => {
     setMachines((prevMachines) =>
       prevMachines.filter((machine) => machine.id !== id)

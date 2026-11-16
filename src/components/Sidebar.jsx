@@ -2,40 +2,38 @@ import { NavLink, Link } from "react-router-dom";
 
 export default function Sidebar() {
   const getNavLinkClass = ({ isActive }) =>
-    `group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+    `group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
       isActive
-        ? "bg-slate-900 text-white shadow-sm shadow-slate-900/10 font-semibold"
-        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
+        ? "bg-amber-400 text-zinc-950 shadow-sm shadow-amber-400/20 font-bold"
+        : "text-zinc-400 hover:text-white hover:bg-zinc-800/80"
     }`;
 
   return (
-    <aside className="w-64 bg-white/95 backdrop-blur-md border-r border-slate-200/80 min-h-screen flex flex-col justify-between p-4 sticky top-0 h-screen shrink-0 z-20">
+    <aside className="w-64 bg-zinc-900 border-r border-zinc-800 min-h-screen flex flex-col justify-between p-4 sticky top-0 h-screen shrink-0 z-20">
       <div className="space-y-6">
-        {/* Brand Header */}
         <Link to="/" className="flex items-center gap-3 px-2 py-2 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center shadow-md shadow-blue-500/20 ring-1 ring-white/20">
-            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          <div className="w-9 h-9 rounded-xl bg-amber-400 text-zinc-950 flex items-center justify-center shadow-md shadow-amber-400/20">
+            <svg className="w-5 h-5 text-zinc-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-sm font-bold tracking-tight text-slate-900">
-                Factory<span className="text-blue-600">Pulse</span>
+              <span className="text-sm font-extrabold tracking-tight text-white">
+                Factory<span className="text-amber-400">Pulse</span>
               </span>
-              <span className="text-[10px] font-semibold bg-blue-50 text-blue-700 px-1.5 py-0.2 rounded border border-blue-200/50">
+              <span className="text-[10px] font-bold bg-zinc-800 text-amber-400 px-1.5 py-0.5 rounded border border-zinc-700">
                 IoT
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 font-medium tracking-tight">
+            <p className="text-[11px] text-zinc-400 font-medium tracking-tight">
               Site Industriel de Safi
             </p>
           </div>
         </Link>
 
-        {/* Section Navigation */}
         <nav className="space-y-1">
-          <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
             Supervision
           </div>
 
@@ -61,15 +59,14 @@ export default function Sidebar() {
           </NavLink>
         </nav>
 
-        {/* Action Button */}
         <div className="pt-2">
           <NavLink
             to="/machines/new"
             className={({ isActive }) =>
-              `flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all shadow-sm ${
+              `flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm ${
                 isActive
-                  ? "bg-blue-700 text-white shadow-blue-500/25 ring-2 ring-blue-300"
-                  : "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/20 hover:shadow-md"
+                  ? "bg-amber-300 text-zinc-950 ring-2 ring-amber-400"
+                  : "bg-amber-400 text-zinc-950 hover:bg-amber-300 shadow-amber-400/20 hover:shadow-md"
               }`
             }
           >
@@ -81,18 +78,17 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Footer Industrial Status Card */}
-      <div className="p-3 bg-slate-50/80 rounded-xl border border-slate-200/60">
+      <div className="p-3 bg-zinc-800/80 rounded-xl border border-zinc-700/80">
         <div className="flex items-center gap-2.5">
           <div className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400"></span>
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-semibold text-slate-800 truncate">
+            <p className="text-[11px] font-bold text-white truncate">
               Télémétrie en direct
             </p>
-            <p className="text-[10px] text-slate-400 font-medium">
+            <p className="text-[10px] text-zinc-400 font-medium">
               8 capteurs connectés
             </p>
           </div>

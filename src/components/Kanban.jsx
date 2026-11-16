@@ -9,25 +9,25 @@ export default function Kanban({ machines = [], onStatusChange }) {
     {
       id: "En fonctionnement",
       titre: "En fonctionnement",
-      badgeClass: "bg-emerald-50 text-emerald-800 border-emerald-200/80",
-      activeBorder: "border-emerald-500 bg-emerald-50/40 ring-4 ring-emerald-100/70",
-      dot: "bg-emerald-500",
+      badgeClass: "bg-amber-50 text-amber-900 border-amber-300/80",
+      activeBorder: "border-amber-400 bg-amber-50/50 ring-4 ring-amber-200/60",
+      dot: "bg-amber-400",
       prochainsStatuts: ["À l'arrêt", "En panne"],
     },
     {
       id: "À l'arrêt",
       titre: "À l'arrêt",
-      badgeClass: "bg-amber-50 text-amber-800 border-amber-200/80",
-      activeBorder: "border-amber-500 bg-amber-50/40 ring-4 ring-amber-100/70",
-      dot: "bg-amber-500",
+      badgeClass: "bg-zinc-100 text-zinc-700 border-zinc-200",
+      activeBorder: "border-zinc-400 bg-zinc-100/60 ring-4 ring-zinc-200/80",
+      dot: "bg-zinc-400",
       prochainsStatuts: ["En fonctionnement", "En panne"],
     },
     {
       id: "En panne",
       titre: "En panne",
-      badgeClass: "bg-rose-50 text-rose-800 border-rose-200/80",
-      activeBorder: "border-rose-500 bg-rose-50/40 ring-4 ring-rose-100/70",
-      dot: "bg-rose-500",
+      badgeClass: "bg-zinc-200 text-zinc-900 border-zinc-300",
+      activeBorder: "border-zinc-600 bg-zinc-200/60 ring-4 ring-zinc-300/80",
+      dot: "bg-zinc-800",
       prochainsStatuts: ["En fonctionnement", "À l'arrêt"],
     },
   ];
@@ -74,7 +74,6 @@ export default function Kanban({ machines = [], onStatusChange }) {
     };
   }, [draggingCard, onStatusChange]);
 
-  // Support Drag & Drop HTML5 natif
   const handleNativeDragStart = (e, machineId) => {
     e.dataTransfer.setData("text/plain", String(machineId));
     e.dataTransfer.effectAllowed = "move";
@@ -100,24 +99,22 @@ export default function Kanban({ machines = [], onStatusChange }) {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto select-none">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200/60">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-zinc-200">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-black tracking-tight text-zinc-900">
             Suivi Kanban des Équipements
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-zinc-500 mt-1">
             Déplacez une machine par <strong>glisser-déposer</strong> pour mettre à jour son statut opérationnel
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-slate-500 font-medium bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-2xs">
-          <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+        <div className="flex items-center gap-2 text-xs text-zinc-600 font-semibold bg-white px-3 py-1.5 rounded-xl border border-zinc-200 shadow-2xs">
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
           <span>Synchronisation automatique</span>
         </div>
       </div>
 
-      {/* Kanban Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
         {colonnes.map((col) => {
           const colMachines = machines.filter((m) => m.statut === col.id);
@@ -129,17 +126,15 @@ export default function Kanban({ machines = [], onStatusChange }) {
               data-column-id={col.id}
               onDragOver={(e) => handleNativeDragOver(e, col.id)}
               onDrop={(e) => handleNativeDrop(e, col.id)}
-              className={`rounded-2xl p-4 border transition-all min-h-[600px] flex flex-col ${
-                isOver
+              className={`rounded-2xl p-4 border transition-all min-h-[600px] flex flex-col ${isOver
                   ? col.activeBorder
-                  : "bg-slate-100/60 border-slate-200/80"
-              }`}
+                  : "bg-zinc-100/70 border-zinc-200/90"
+                }`}
             >
-              {/* Column Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200/60 mb-3.5 pointer-events-none">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-200/70 mb-3.5 pointer-events-none">
                 <div className="flex items-center gap-2">
                   <span className={`w-2.5 h-2.5 rounded-full ${col.dot}`}></span>
-                  <h3 className="font-bold text-slate-900 text-xs tracking-tight">
+                  <h3 className="font-bold text-zinc-900 text-xs tracking-tight">
                     {col.titre}
                   </h3>
                 </div>
@@ -150,7 +145,6 @@ export default function Kanban({ machines = [], onStatusChange }) {
                 </span>
               </div>
 
-              {/* Cards Container */}
               <div className="space-y-3 flex-1 flex flex-col">
                 {colMachines.map((machine) => {
                   const isBeingDragged = draggingCard?.id === machine.id;
@@ -161,35 +155,33 @@ export default function Kanban({ machines = [], onStatusChange }) {
                       draggable="true"
                       onDragStart={(e) => handleNativeDragStart(e, machine.id)}
                       onPointerDown={(e) => handlePointerDown(e, machine)}
-                      className={`bg-white rounded-xl p-4 border border-slate-200/90 shadow-2xs hover:shadow-md transition-all cursor-grab active:cursor-grabbing touch-none group ${
-                        isBeingDragged
-                          ? "opacity-25 border-dashed border-blue-400 scale-95"
+                      className={`bg-white rounded-xl p-4 border border-zinc-200/90 shadow-2xs hover:shadow-md transition-all cursor-grab active:cursor-grabbing touch-none group ${isBeingDragged
+                          ? "opacity-25 border-dashed border-amber-400 scale-95"
                           : "opacity-100"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-start justify-between gap-2 pointer-events-none">
-                        <span className="font-mono text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                        <span className="font-mono text-[10px] font-bold text-zinc-500 bg-zinc-100 px-1.5 py-0.5 rounded">
                           #{String(machine.id).padStart(2, "0")}
                         </span>
-                        <span className="text-[11px] text-slate-400 font-medium tracking-tight">
+                        <span className="text-[11px] text-zinc-400 font-medium tracking-tight">
                           {machine.zone}
                         </span>
                       </div>
 
-                      <h4 className="font-bold text-slate-900 text-xs mt-2 group-hover:text-blue-600 transition-colors pointer-events-none">
+                      <h4 className="font-bold text-zinc-900 text-xs mt-2 group-hover:text-amber-600 transition-colors pointer-events-none">
                         {machine.nom}
                       </h4>
 
-                      <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 pointer-events-none">
-                        <span className="text-slate-400">Production</span>
-                        <span className="font-bold text-slate-800 tabular-nums">
+                      <div className="mt-3 pt-2.5 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500 pointer-events-none">
+                        <span className="text-zinc-400">Production</span>
+                        <span className="font-bold text-zinc-900 tabular-nums">
                           {machine.production} pcs
                         </span>
                       </div>
 
-                      {/* Quick Move Buttons */}
-                      <div className="mt-3 pt-2 border-t border-slate-100 flex items-center gap-1.5 flex-wrap">
-                        <span className="text-[10px] text-slate-400 font-medium">
+                      <div className="mt-3 pt-2 border-t border-zinc-100 flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[10px] text-zinc-400 font-medium">
                           Déplacer :
                         </span>
                         {col.prochainsStatuts.map((target) => (
@@ -199,7 +191,7 @@ export default function Kanban({ machines = [], onStatusChange }) {
                             onClick={() =>
                               onStatusChange && onStatusChange(machine.id, target)
                             }
-                            className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-600 transition cursor-pointer"
+                            className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-zinc-100 hover:bg-amber-400 hover:text-zinc-950 text-zinc-700 transition cursor-pointer"
                           >
                             → {target}
                           </button>
@@ -210,7 +202,7 @@ export default function Kanban({ machines = [], onStatusChange }) {
                 })}
 
                 {colMachines.length === 0 && (
-                  <div className="flex-1 min-h-[140px] border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center text-xs text-slate-400 font-medium p-4 text-center pointer-events-none">
+                  <div className="flex-1 min-h-[140px] border-2 border-dashed border-zinc-200 rounded-xl flex items-center justify-center text-xs text-zinc-400 font-medium p-4 text-center pointer-events-none">
                     Déposez une machine ici
                   </div>
                 )}
@@ -220,7 +212,6 @@ export default function Kanban({ machines = [], onStatusChange }) {
         })}
       </div>
 
-      {/* Floating Card during active Pointer Drag */}
       {draggingCard && (
         <div
           id="floating-card"
@@ -233,21 +224,21 @@ export default function Kanban({ machines = [], onStatusChange }) {
             zIndex: 99999,
             transform: "rotate(2deg) scale(1.03)",
           }}
-          className="bg-white rounded-xl p-4 border border-blue-500 shadow-2xl shadow-blue-500/15 opacity-95 transition-transform ring-2 ring-blue-500/20"
+          className="bg-white rounded-xl p-4 border border-amber-400 shadow-2xl shadow-amber-400/20 opacity-95 transition-transform ring-2 ring-amber-400/30"
         >
           <div className="flex items-start justify-between gap-2">
-            <span className="font-mono text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+            <span className="font-mono text-[10px] font-bold text-zinc-500 bg-zinc-100 px-1.5 py-0.5 rounded">
               #{String(draggingCard.id).padStart(2, "0")}
             </span>
-            <span className="text-[11px] text-slate-400 font-medium">
+            <span className="text-[11px] text-zinc-400 font-medium">
               {draggingCard.zone}
             </span>
           </div>
-          <h4 className="font-bold text-slate-900 text-xs mt-1">
+          <h4 className="font-bold text-zinc-900 text-xs mt-1">
             {draggingCard.nom}
           </h4>
-          <div className="mt-2 text-[11px] text-blue-600 font-semibold flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+          <div className="mt-2 text-[11px] text-amber-700 font-bold flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
             <span>Vers : {hoveredCol || "Relâchez sur une colonne"}</span>
           </div>
         </div>

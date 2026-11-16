@@ -7,10 +7,6 @@ import Kanban from "./components/Kanban";
 import Toast from "./components/Toast";
 import useMachines from "./hooks/useMachines";
 
-/**
- * Composant racine App :
- * Configure le routage de l'application et partage l'état global fourni par useMachines.
- */
 export default function App() {
   const {
     machines,
@@ -25,14 +21,11 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className="flex min-h-screen bg-slate-50 text-slate-900">
-        {/* Barre de navigation latérale */}
+      <div className="flex min-h-screen bg-zinc-100/70 text-zinc-900">
         <Sidebar />
 
-        {/* Zone de contenu dynamique selon la route */}
         <main className="flex-1 p-8 overflow-y-auto">
           <Routes>
-            {/* Route 1 : Tableau de bord avec les 3 indicateurs KPI en direct */}
             <Route
               path="/"
               element={
@@ -44,7 +37,6 @@ export default function App() {
               }
             />
 
-            {/* Route 2 : Gestion des machines (liste, filtres, tri, export CSV) */}
             <Route
               path="/machines"
               element={
@@ -58,7 +50,6 @@ export default function App() {
               }
             />
 
-            {/* Route 3 : Formulaire contrôlé d'ajout d'une machine */}
             <Route
               path="/machines/new"
               element={
@@ -69,7 +60,6 @@ export default function App() {
               }
             />
 
-            {/* Route 4 (Challenge) : Tableau Kanban interactif */}
             <Route
               path="/kanban"
               element={
@@ -83,7 +73,6 @@ export default function App() {
         </main>
       </div>
 
-      {/* Notification Toast globale */}
       {toast && (
         <Toast
           message={toast.message}
